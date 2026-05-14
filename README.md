@@ -24,7 +24,7 @@
 
 \## Video Demonstration Link
 
-https://drive.google.com/drive/folders/1y8smWg2f0GmteJ1B-XVunb3\_CrQPv5ri?usp=sharing
+https://drive.google.com/drive/folders/1y8smWg2f0GmteJ1B-XVunb3\_CrQPv5ri?usp=sharing  or Go to the Google Drive link provided in Teams.
 
 
 
