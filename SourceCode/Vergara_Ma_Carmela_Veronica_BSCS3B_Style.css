@@ -1,0 +1,726 @@
+/* ============================================================
+   This file controls all the visual appearance of the program:
+   colors, fonts, layout, spacing, animations, and component styles.
+   It uses CSS custom properties (variables) defined in :root
+   so colors can be changed easily in one place.
+   ============================================================ */
+
+
+/* ===== COLOR PALETTE (CSS Variables) =====
+   All colors used throughout the program are defined here.
+   Using variables makes it easy to update the theme in one place. */
+:root {
+  --cream:    #f1e7dc;   
+  --blush:    #efc1ae;   
+  --rose:     #d77f70;   
+  --mint:     #ddebea;   
+  --sage:     #a9c7c2;   
+  --teal:     #2f4f50;   
+  --teal-mid: #426768;   
+  --white:    #ffffff;   
+  --text:     #263636;   
+  --text-mid: #4f6767;  
+  --text-light:#7e9999;  
+  --border:   #b7d1cd;   
+  --shadow:   rgba(60,85,86,0.18); 
+}
+
+
+/* ===== RESET =====
+   Removes default browser margin, padding, and box-sizing inconsistencies.
+   box-sizing: border-box means padding and border are included in element width. */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+/* ===== BODY =====
+   Sets the global font, background color, and text color for the whole page. */
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+
+/* ===== HEADER =====
+   The top banner with the program title and subtitle.
+   Uses a dark teal background with decorative circles via ::before and ::after. */
+header {
+  background: var(--teal);
+  padding: 40px 40px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative circle in the top-right corner of the header */
+header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+
+/* Decorative circle in the bottom-left corner of the header */
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(200,219,215,0.08);
+}
+
+/* Main title text in the header */
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.2rem;
+  color: var(--blush);
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+/* Subtitle text below the main title */
+header p {
+  color: var(--sage);
+  margin-top: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  position: relative;
+}
+
+
+/* ===== PROGRESS STEPS =====
+   The step indicator row (Step 1 → Step 2 → Step 3 → Step 4).
+   Uses flexbox to align pills and connectors in a row. */
+.progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 28px 24px 8px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Each step bubble (e.g. "1 Number of Processes") */
+.step-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-light);
+  background: var(--white);
+  border: 2px solid var(--border);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+/* The numbered circle inside each step pill */
+.step-pill .num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-light);
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
+}
+
+/* Style for the currently active step */
+.step-pill.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--white);
+  box-shadow: 0 4px 14px var(--shadow);
+}
+
+/* The number circle inside the active step */
+.step-pill.active .num {
+  background: var(--blush);
+  color: var(--teal);
+}
+
+/* Style for steps that have already been completed */
+.step-pill.done {
+  background: var(--mint);
+  border-color: var(--sage);
+  color: var(--teal);
+}
+
+/* The number circle inside a completed step */
+.step-pill.done .num {
+  background: var(--sage);
+  color: var(--teal);
+}
+
+/* The thin horizontal line connecting two step pills */
+.step-connector {
+  width: 32px;
+  height: 2px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+
+/* ===== MAIN CONTENT AREA =====
+   Centers the content and stacks all the step cards vertically. */
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+/* ===== CARD =====
+   Each step (1–4) is displayed inside a card.
+   Cards have a white background, rounded corners, and a soft shadow.
+   The slideIn animation makes them appear smoothly. */
+.card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 4px 20px var(--shadow);
+  animation: slideIn 0.35s ease;
+}
+
+/* Animation: card fades in and slides up when it appears */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* The top row of a card: contains the colored accent bar and the section title */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+/* Thin vertical colored bar beside the card title (decorative accent) */
+.card-icon {
+  width: 6px;
+  height: 32px;
+  border-radius: 6px;
+  background: linear-gradient(to bottom, var(--rose), var(--teal));
+}
+
+/* Section title inside each card (e.g. "Process Details") */
+.card h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+  color: var(--teal);
+}
+
+
+/* ===== HIDDEN UTILITY CLASS =====
+   Elements with this class are completely hidden from view.
+   JavaScript adds/removes this class to show or hide sections. */
+.hidden { display: none !important; }
+
+
+/* ===== INPUT ROW =====
+   Used in Step 1 to lay out the label, number input, and button side by side. */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Label text beside an input field */
+.input-row label {
+  color: var(--text-mid);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+
+/* ===== INPUT FIELDS =====
+   Styles for all number and text input boxes in the program.
+   Includes a focus highlight so the user knows which field is active. */
+input[type="number"], input[type="text"] {
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 9px 14px;
+  font-size: 0.92rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  width: 110px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Highlight border and glow when the user clicks into a field */
+input[type="number"]:focus, input[type="text"]:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(60,85,86,0.12);
+}
+
+
+/* ===== BUTTONS (default) =====
+   Base style for all buttons in the program.
+   Includes a hover effect (lift + shadow) and a click effect (press down). */
+button {
+  background: var(--teal);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  letter-spacing: 0.3px;
+}
+
+/* Hover: button lifts slightly and darkens */
+button:hover {
+  background: var(--teal-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* Click: button returns to original position */
+button:active { transform: translateY(0); }
+
+
+/* ===== NOTE BOX =====
+   The info message shown at the top of Step 2.
+   Has a colored left border to draw attention. */
+.note {
+  background: var(--mint);
+  border-left: 4px solid var(--sage);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.87rem;
+  color: var(--teal);
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+
+/* ===== TABLES =====
+   Used for both the process input table (Step 2) and results table (Step 4). */
+
+/* Allows horizontal scrolling on small screens */
+.table-wrapper { overflow-x: auto; }
+
+/* Full-width table with no border gaps between cells */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+/* Table column header cells */
+th {
+  background: var(--mint);
+  color: var(--teal);
+  padding: 11px 14px;
+  text-align: left;
+  border-bottom: 2px solid var(--sage);
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Regular table data cells */
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* Highlight a table row when the user hovers over it */
+tbody tr:hover { background: var(--cream); }
+
+/* Input fields inside the process input table (Step 2) */
+#processTable td input[type="text"],
+#processTable td input[type="number"] {
+  width: 100%; max-width: 110px;
+}
+
+
+/* ===== ALGORITHM SELECTION GRID (Step 3) =====
+   Lays out the 6 algorithm buttons in a responsive grid.
+   Buttons wrap to a new row automatically on smaller screens. */
+.algo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+  margin-bottom: 0;
+}
+
+/* Each individual algorithm button */
+.algo-btn {
+  background: var(--cream);
+  color: var(--teal);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 0.87rem;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+
+/* Hover: algorithm button turns teal and lifts */
+.algo-btn:hover {
+  background: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--shadow);
+}
+
+/* Active: the currently selected algorithm button stays highlighted */
+.algo-btn.active-algo {
+  background: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+}
+
+
+/* ===== PRIORITY DROPDOWN PANELS =====
+   These panels slide in below the algorithm buttons when the user
+   selects Priority Scheduling or any priority-based algorithm.
+   One panel asks for the type (Preemptive or Non-Preemptive),
+   another asks for the priority rule (lower or higher = better). */
+.prio-dropdown {
+  background: var(--mint);
+  border: 2px solid var(--sage);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideIn 0.25s ease;
+}
+
+/* Label text inside a priority panel */
+.prio-dropdown label {
+  font-weight: 700;
+  color: var(--teal);
+  font-size: 0.9rem;
+}
+
+/* Container for the choice buttons inside a priority panel */
+.prio-choices {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Individual choice button (e.g. "Non-Preemptive" or "Lower number = Higher priority") */
+.prio-choice-btn {
+  background: var(--white);
+  color: var(--teal);
+  border: 2px solid var(--sage);
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.2s;
+}
+
+/* Hover and selected state for priority choice buttons */
+.prio-choice-btn:hover, .prio-choice-btn.selected {
+  background: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+
+/* ===== QUANTUM PANEL =====
+   Shown below the algorithm buttons when Round Robin or Priority+RR is selected.
+   The user types in the Time Quantum value before running the algorithm. */
+.quantum-panel {
+  background: var(--blush);
+  border: 2px solid var(--rose);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  animation: slideIn 0.25s ease;
+}
+
+/* Label inside the quantum panel */
+.quantum-panel label {
+  font-weight: 700;
+  color: var(--teal);
+  font-size: 0.9rem;
+}
+
+/* Quantum number input box */
+.quantum-panel input {
+  width: 80px;
+  background: var(--white);
+}
+
+/* "Run Algorithm" button inside the quantum panel */
+.quantum-panel button {
+  background: var(--rose);
+}
+
+/* Hover: quantum run button changes to teal */
+.quantum-panel button:hover { background: var(--teal); }
+
+
+/* ===== GANTT CHART =====
+   Displays the execution timeline of processes after running an algorithm.
+   Uses CSS flexbox proportions (flex: <duration>) so blocks are always
+   proportionally sized and fit perfectly inside the card — no overflow. */
+
+/* Outer wrapper for the gantt chart — takes full card width */
+.gantt-wrapper { width: 100%; }
+
+/* Container that holds the two rows: blocks row + times row */
+.gantt-chart {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* The top row of colored process blocks */
+.gantt-blocks {
+  display: flex;
+  width: 100%;
+}
+
+/* Each individual colored block in the Gantt chart.
+   The width is NOT set here — it is set by JS using style.flex = duration.
+   This makes each block proportional to how long that process ran. */
+.gantt-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  font-weight: 800;
+  font-size: 0.82rem;
+  border-right: 2px solid var(--white);
+  padding: 0 4px;
+  color: var(--white);
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Rounded left edge for the first block in the chart */
+.gantt-block:first-child { border-radius: 10px 0 0 10px; }
+
+/* Rounded right edge and no right border for the last block */
+.gantt-block:last-child  { border-radius: 0 10px 10px 0; border-right: none; }
+
+/* IDLE blocks (when CPU is waiting for a process to arrive) use the sage color */
+.gantt-block.idle { background: var(--sage); color: var(--teal); }
+
+/* The bottom row of time labels (start times under each block) */
+.gantt-times {
+  display: flex;
+  width: 100%;
+  padding-top: 4px;
+}
+
+/* Each time label under a Gantt block.
+   Uses the same flex value as the block above it, so labels align perfectly. */
+.gantt-time {
+  font-size: 0.76rem;
+  color: var(--text-light);
+  text-align: left;
+  font-weight: 600;
+  min-width: 0;
+  overflow: visible;
+}
+
+/* The final end-time label has no flex — it just appears at the far right */
+.gantt-time-end {
+  flex: none;
+}
+
+
+/* ===== PROCESS COLORS =====
+   10 different colors for the Gantt chart blocks.
+   JS assigns color-0 to the first process, color-1 to the second, etc.
+   These colors are from the program's palette for visual consistency. */
+.color-0 { background: #E09789; }
+.color-1 { background: #3C5556; }
+.color-2 { background: #7fb3ae; }
+.color-3 { background: #c2856f; }
+.color-4 { background: #5e8c8d; }
+.color-5 { background: #d4a5a0; }
+.color-6 { background: #4a7a7b; }
+.color-7 { background: #a06b5e; }
+.color-8 { background: #89bab5; }
+.color-9 { background: #e8b5a0; }
+
+
+/* ===== RESULT SECTION =====
+   Wraps each output section inside Step 4 (Gantt Chart, Summary Table).
+   Adds spacing below each section. */
+.result-section { margin-bottom: 28px; }
+
+/* Section headings inside the results card (e.g. "Gantt Chart") */
+.result-section h4 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--teal);
+  margin-bottom: 14px;
+}
+
+
+/* ===== ALGORITHM RESULT HEADER =====
+   The info box at the top of Step 4 that shows:
+   - The name of the selected algorithm (bold serif text)
+   - A short description of how it works
+   - Formula pills showing the WT and TAT formulas used */
+.algo-result-header {
+  background: var(--mint);
+  border: 2px solid var(--sage);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+
+/* Algorithm name (e.g. "First-Come, First-Served (FCFS)") */
+.algo-result-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  color: var(--teal);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+/* Short description text below the algorithm name */
+.algo-result-desc {
+  font-size: 0.87rem;
+  color: var(--text-mid);
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* Container for the formula pill badges */
+.algo-formula {
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Each formula badge (e.g. "WT = TAT − Burst Time") */
+.formula-pill {
+  background: var(--white);
+  border: 1.5px solid var(--sage);
+  border-radius: 50px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  color: var(--teal);
+  font-weight: 700;
+}
+
+
+/* ===== AVERAGE BOXES =====
+   Two boxes shown below the summary table:
+   one for Average Waiting Time, one for Average Turnaround Time.
+   They sit side by side and stretch to fill the available width. */
+.avg-boxes {
+  display: flex;
+  gap: 14px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+/* Each individual average box */
+.avg-card {
+  flex: 1;
+  min-width: 200px;
+  background: var(--mint);
+  border: 2px solid var(--sage);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+/* Label text inside an average box (e.g. "Average Waiting Time") */
+.avg-title {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  font-weight: 700;
+}
+
+/* The computed average number displayed in large bold text */
+.avg-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--teal);
+  margin-top: 6px;
+}
+
+
+/* ===== RESET / ACTION BUTTONS =====
+   The "Run Another Algorithm" and "Generate New Processes" buttons
+   at the bottom of the Results section.
+   They use a lighter style (cream background) to look secondary
+   compared to the main teal buttons. */
+.reset-btn {
+  background: var(--cream);
+  color: var(--teal);
+  border: 2px solid var(--sage);
+  margin-top: 8px;
+}
+
+/* Hover: fills with sage green */
+.reset-btn:hover {
+  background: var(--sage);
+  color: var(--teal);
+}
+
+
+/* ===== FOOTER =====
+   Simple centered text at the very bottom of the page
+   showing the student's name. */
+footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-light);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-top: 1px solid var(--border);
+}
+
+
+/* ===== DIVIDER =====
+   A thin horizontal line used to visually separate
+   the Gantt Chart from the Summary Table in the Results section. */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 18px 0;
+}

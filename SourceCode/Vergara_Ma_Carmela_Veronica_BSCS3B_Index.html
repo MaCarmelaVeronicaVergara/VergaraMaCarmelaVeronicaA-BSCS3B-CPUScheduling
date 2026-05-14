@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CPU Scheduling Simulator</title>
+
+  <!-- Google Fonts: DM Serif Display for headings, Nunito for body text -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- External stylesheet for all visual styling -->
+  <link rel="stylesheet" href="Vergara_Ma_Carmela_Veronica_BSCS3B_Style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER =====
+       Displays the program title and list of supported algorithms.
+       Purely decorative / informational — no interactive elements. -->
+  <header>
+    <h1> CPU Scheduling Algorithms</h1>
+    <p>Simulate FCFS · SJF · SRT · Round Robin · Priority · Priority + RR</p>
+  </header>
+
+  <!-- ===== PROGRESS STEPS =====
+       Shows the user which step they are currently on (1 to 4).
+       Each pill is updated by JavaScript (setActivePill function)
+       to show "active" (current step) or "done" (completed step). -->
+  <div class="progress-bar">
+    <div class="step-pill active" id="pill1"><span class="num">1</span> Number of Processes</div>
+    <div class="step-connector"></div>
+    <div class="step-pill" id="pill2"><span class="num">2</span> Process Details</div>
+    <div class="step-connector"></div>
+    <div class="step-pill" id="pill3"><span class="num">3</span> Choose Algorithm</div>
+    <div class="step-connector"></div>
+    <div class="step-pill" id="pill4"><span class="num">4</span> Results</div>
+  </div>
+
+  <main>
+
+    <!-- ===== STEP 1: NUMBER OF PROCESSES =====
+         The user enters how many processes to simulate (minimum 3).
+         Clicking "Generate Inputs" calls generateInputs() in the JS file,
+         which builds the input table rows for Step 2. -->
+    <section class="card" id="step1">
+      <div class="card-header">
+        <div class="card-icon"></div>
+        <h2>Number of Processes</h2>
+      </div>
+      <div class="input-row">
+        <label for="numProcesses">How many processes? <em style="color:var(--text-light);font-style:normal;">(min. 3)</em></label>
+        <input type="number" id="numProcesses" min="3" value="" placeholder="e.g. 3" />
+        <button onclick="generateInputs()">Generate Inputs</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 2: PROCESS DETAILS =====
+         A table where the user fills in each process's details:
+         - Process ID (e.g. P1, P2)
+         - Arrival Time (when the process enters the ready queue)
+         - Burst Time (how long the process needs the CPU)
+         - Priority (used only by Priority-based algorithms)
+         Rows are dynamically added here by generateInputs() in JS. -->
+    <section class="card hidden" id="step2">
+      <div class="card-header">
+        <div class="card-icon"></div>
+        <h2>Process Details</h2>
+      </div>
+
+      <!-- Note reminding the user that priority is only used in certain algorithms -->
+      <p class="note"> Priority values are used only in Priority-based algorithms. You will choose the priority rule before running.</p>
+
+      <div class="table-wrapper">
+        <table id="processTable">
+          <thead>
+            <tr>
+              <th>Process ID</th>
+              <th>Arrival Time</th>
+              <th>Burst Time</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <!-- Table rows are inserted here dynamically by JS -->
+          <tbody id="processBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== STEP 3: CHOOSE ALGORITHM =====
+         Buttons for each scheduling algorithm.
+         - FCFS, SJF, SRT run directly when clicked.
+         - Round Robin and Priority+RR show a Time Quantum input first.
+         - Priority Scheduling shows a dropdown to pick Non-Preemptive or Preemptive.
+         All buttons call JS functions defined in the script file. -->
+    <section class="card hidden" id="step3">
+      <div class="card-header">
+        <div class="card-icon"></div>
+        <h2>Choose Algorithm</h2>
+      </div>
+
+      <!-- Main algorithm selection buttons -->
+      <div class="algo-grid">
+        <button class="algo-btn" onclick="runAlgo('fcfs', this)">1. FCFS</button>
+        <button class="algo-btn" onclick="runAlgo('sjf', this)">2. SJF (Non-Preemptive)</button>
+        <button class="algo-btn" onclick="runAlgo('srt', this)">3. SRT (Preemptive)</button>
+        <button class="algo-btn" onclick="askQuantum('rr', this)">4. Round Robin</button>
+        <button class="algo-btn" onclick="showPriorityChoice(this)">5. Priority Scheduling</button>
+        <button class="algo-btn" onclick="askQuantum('priority_rr', this)">6. Priority + Round Robin</button>
+      </div>
+
+      <!-- Priority sub-choice panel: appears when "Priority Scheduling" is clicked.
+           Lets the user choose between Non-Preemptive and Preemptive modes. -->
+      <div class="prio-dropdown hidden" id="prioDropdown">
+        <label> Select Priority Scheduling type:</label>
+        <div class="prio-choices">
+          <button class="prio-choice-btn" onclick="runPrioType('priority_np')">Non-Preemptive</button>
+          <button class="prio-choice-btn" onclick="runPrioType('priority_p')">Preemptive</button>
+        </div>
+      </div>
+
+      <!-- Priority Rule panel: appears for any Priority-based algorithm.
+           The user selects whether a lower or higher number means higher priority. -->
+      <div class="prio-dropdown hidden" id="prioRuleBox" style="background:var(--blush);border-color:var(--rose);">
+        <label> Priority Rule: which value means higher priority?</label>
+        <div class="prio-choices">
+          <button class="prio-choice-btn" id="ruleLow"  onclick="setPrioRule('lower')" >Lower number = Higher priority</button>
+          <button class="prio-choice-btn" id="ruleHigh" onclick="setPrioRule('higher')">Higher number = Higher priority</button>
+        </div>
+      </div>
+
+      <!-- Time Quantum panel: appears only for Round Robin and Priority+RR.
+           The user enters how many time units each process gets per turn. -->
+      <div class="quantum-panel hidden" id="quantumRow">
+        <label for="quantum"> Time Quantum:</label>
+        <input type="number" id="quantum" min="1" value="2" />
+        <button onclick="runWithQuantum()">Run Algorithm</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 4: RESULTS =====
+         Displays the output after an algorithm runs:
+         1. Algorithm name, description, and formulas used
+         2. Gantt Chart — visual timeline of process execution
+         3. Summary Table — per-process Waiting Time and Turnaround Time
+         4. Average boxes — Average WT and Average TAT
+         5. Action buttons to re-run or start over
+         All content here is filled in dynamically by displayResults() in JS. -->
+    <section class="card hidden" id="step4">
+      <div class="card-header">
+        <div class="card-icon"></div>
+        <h2>Results</h2>
+      </div>
+
+      <!-- Algorithm name, short description, and formula pills -->
+      <div class="algo-result-header">
+        <div class="algo-result-name" id="algoLabel">—</div>
+        <div class="algo-result-desc" id="algoDesc">—</div>
+        <div class="algo-formula" id="algoFormula"></div>
+      </div>
+
+      <!-- Gantt Chart: visual bar showing the order and duration of process execution -->
+      <div class="result-section">
+        <h4> Gantt Chart</h4>
+        <!-- ganttChart div is filled by JS using flex-based proportional blocks -->
+        <div id="ganttChart" class="gantt-wrapper"></div>
+      </div>
+
+      <!-- Horizontal divider line between chart and table -->
+      <div class="divider"></div>
+
+      <!-- Process Summary Table: shows WT and TAT per process, sorted by PID -->
+      <div class="result-section">
+        <h4> Process Summary Table</h4>
+        <div class="table-wrapper">
+          <table id="resultTable">
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>Arrival Time</th>
+                <th>Burst Time</th>
+                <th>Priority</th>
+                <th>Waiting Time</th>
+                <th>Turnaround Time</th>
+              </tr>
+            </thead>
+            <!-- Table rows are inserted here by JS after the algorithm runs -->
+            <tbody id="resultBody"></tbody>
+          </table>
+
+          <!-- Average boxes: shown below the table, filled by JS -->
+          <div class="avg-boxes" id="avgBoxes"></div>
+        </div>
+      </div>
+
+      <!-- Action buttons at the bottom of the results section:
+           "Run Another Algorithm" — stays on same process data, goes back to Step 3
+           "Generate New Processes" — clears everything and starts from Step 1 -->
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="reset-btn" onclick="resetAll()">Run Another Algorithm</button>
+        <button class="reset-btn" onclick="goToStep1()">Generate New Processes</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER =====
+       Displays the student's name and section. -->
+  <footer>
+    <p>Ma. Carmela Veronica Vergara &mdash; BSCS-3B</p>
+  </footer>
+
+  <!-- External JavaScript file containing all scheduling logic and UI behavior -->
+  <script src="Vergara_Ma_Carmela_Veronica_BSCS3B_Script.js"></script>
+</body>
+</html>
